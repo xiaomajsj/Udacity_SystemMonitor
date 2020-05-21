@@ -189,7 +189,7 @@ int LinuxParser::RunningProcesses() {
 
 // TODO: Read and return the command associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::Command(int pid[[maybe_unused]]) { 
+string LinuxParser::Command(int pid) { 
    string command;
    string line;
    std::ifstream stream(kProcDirectory + "/" + to_string(pid)+ kCmdlineFilename);
@@ -199,10 +199,11 @@ string LinuxParser::Command(int pid[[maybe_unused]]) {
     linestream >> command;
     return command;
   }
-  }
+}
+}
 
 
-  return string(); }
+
 
 // TODO: Read and return the memory used by a process
 // REMOVE: [[maybe_unused]] once you define the function
@@ -210,11 +211,40 @@ string LinuxParser::Ram(int pid[[maybe_unused]]) { return string(); }
 
 // TODO: Read and return the user ID associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::Uid(int pid[[maybe_unused]]) { return string(); }
+string LinuxParser::Uid(int pid) { 
+  string uid;
+   string line;
+   string key;
+   std::ifstream stream(kProcDirectory + "/" + to_string(pid)+ kStatusFilename);
+  if (stream.is_open()) {
+    while(std::getline(stream, line)){
+    std::istringstream linestream(line);
+    linestream >> key>>uid;
+    if(key=="Uid:"){return uid;} 
+  }
+}
+}
 
 // TODO: Read and return the user associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::User(int pid[[maybe_unused]]) { return string(); }
+string LinuxParser::User(int pid) { 
+   string username;
+   string line;
+   string key;
+   string key2;
+   string uid;
+
+   uid=Uid(pid);
+   std::ifstream stream(kPasswordPath);
+  if (stream.is_open()) {
+    while(std::getline(stream, line)){
+    std::replace(line.begin(),line.end(),':',' ');
+    std::istringstream linestream(line);
+    linestream >> username>>key2>>uid;
+    if(key2=="x"){return username;} 
+   }
+ }
+}
 
 // TODO: Read and return the uptime of a process
 // REMOVE: [[maybe_unused]] once you define the function
