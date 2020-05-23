@@ -82,7 +82,7 @@ float LinuxParser::MemoryUtilization() {
   string key;
   string value;
   string KB;
-  float MemTotal, MemFree, MemAvailable;
+  float MemTotal, MemFree;
   std::ifstream filestream(kProcDirectory+kMeminfoFilename);
   if(filestream.is_open()){
    while(std::getline(filestream,line)){
@@ -92,13 +92,11 @@ float LinuxParser::MemoryUtilization() {
      MemTotal=stringToNum<float>(value);}
      else if(key=="MemFree:"){
      MemFree=stringToNum<float>(value);}
-     else if(key=="MemAvailable:"){
-     MemAvailable=stringToNum<float>(value);}
      }
    }
-   return (MemTotal-MemFree)/MemTotal;
   }
-  }
+return (MemTotal-MemFree)/MemTotal;
+}
 
 // TODO: Read and return the system uptime
 long LinuxParser::UpTime() { 
@@ -170,7 +168,8 @@ int LinuxParser::TotalProcesses() {
     if(key=="processes"){return stringToNum<int>(TotalPrcs);}
   }
   }
- }
+  return stringToNum<int>(TotalPrcs);
+}
 
 // TODO: Read and return the number of running processes
 int LinuxParser::RunningProcesses() { 
@@ -182,9 +181,12 @@ int LinuxParser::RunningProcesses() {
     while(std::getline(stream, line)){
     std::istringstream linestream(line);
     linestream >> key >> RunningPrcs;
-    if(key=="procs_running"){return stringToNum<int>(RunningPrcs);}
+    if(key=="procs_running"){
+      return stringToNum<int>(RunningPrcs);
+      }
    }
   }
+  return stringToNum<int>(RunningPrcs);
 }
 
 // TODO: Read and return the command associated with a process
@@ -197,6 +199,7 @@ string LinuxParser::Command(int pid) {
       return line;
   }
  }
+ return line;
 }
 
 vector<long> LinuxParser::ProcessUtilization(int pid){
@@ -216,24 +219,30 @@ vector<long> LinuxParser::ProcessUtilization(int pid){
           linestream >> key;
           utime=key;
           ProcUtili.push_back(stringToNum<long>(utime));
+          break;
         case 14: 
           linestream >> key;
           stime=key;
           ProcUtili.push_back(stringToNum<long>(stime));
+          break;
         case 15: 
           linestream >> key;
           cutime=key;
           ProcUtili.push_back(stringToNum<long>(cutime));
+          break;
         case 16: 
           linestream >> key;
           cstime=key;
           ProcUtili.push_back(stringToNum<long>(cstime));
+          break;
         case 21: 
           linestream >> key;
           starttime=key;
           ProcUtili.push_back(stringToNum<long>(starttime));
+          break;
         default:
           linestream >> unused;
+          break;
       
       }
     }
@@ -262,7 +271,7 @@ string LinuxParser::Ram(int pid) {
     }
   }
  }
-
+return to_string(memoryinM);
 }
 
 // TODO: Read and return the user ID associated with a process
@@ -279,6 +288,7 @@ string LinuxParser::Uid(int pid) {
     if(key=="Uid:"){return uid;} 
   }
  }
+ return uid;
 }
 
 // TODO: Read and return the user associated with a process
@@ -301,6 +311,7 @@ string LinuxParser::User(int pid) {
     if(key2=="x" && uid_==uid){return username;} 
    }
  }
+ return username;
 }
 
 // TODO: Read and return the uptime of a process

@@ -29,7 +29,7 @@ float Process::CpuUtilization() const {
   total_time=ProcUtili[ProcessUtili::uTime]+ProcUtili[ProcessUtili::sTime]+ProcUtili[ProcessUtili::cuTime]+ProcUtili[ProcessUtili::csTime];
   SystemUptime=LinuxParser::UpTime();
   second=SystemUptime-(ProcUtili[ProcessUtili::startTime]/sysconf(_SC_CLK_TCK));
-  cpu_usage=100*((total_time/sysconf(_SC_CLK_TCK))/second);
+  cpu_usage=(((float)(total_time/sysconf(_SC_CLK_TCK)))/(float)second);
 
   return cpu_usage;
   
