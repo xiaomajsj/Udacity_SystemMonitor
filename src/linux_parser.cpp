@@ -199,7 +199,48 @@ string LinuxParser::Command(int pid) {
  }
 }
 
+vector<long> LinuxParser::ProcessUtilization(int pid){
+   string unused;
+   string line;
+   string utime,stime,cutime,cstime,starttime;
+   string key;
+   vector<long> ProcUtili;
 
+   std::ifstream stream(kProcDirectory + "/" + to_string(pid)+ kStatFilename);
+  if (stream.is_open()) {
+    while(std::getline(stream, line)){
+    std::istringstream linestream(line);
+    for(unsigned int i=0;i<=21;i++){
+      switch (i){
+        case 13: 
+          linestream >> key;
+          utime=key;
+          ProcUtili.push_back(stringToNum<long>(utime));
+        case 14: 
+          linestream >> key;
+          stime=key;
+          ProcUtili.push_back(stringToNum<long>(stime));
+        case 15: 
+          linestream >> key;
+          cutime=key;
+          ProcUtili.push_back(stringToNum<long>(cutime));
+        case 16: 
+          linestream >> key;
+          cstime=key;
+          ProcUtili.push_back(stringToNum<long>(cstime));
+        case 21: 
+          linestream >> key;
+          starttime=key;
+          ProcUtili.push_back(stringToNum<long>(starttime));
+        default:
+          linestream >> unused;
+      
+      }
+    }
+  }
+  }
+return ProcUtili;
+}
 
 
 // TODO: Read and return the memory used by a process
@@ -281,7 +322,7 @@ long LinuxParser::UpTime(int pid) {
     
     }
   }
-  return stringToNum<long>(Uptime);
- //return stringToNum<long>(Uptime)/sysconf(_SC_CLK_TCK);
+  
+ return stringToNum<long>(Uptime)/sysconf(_SC_CLK_TCK);
  
  }

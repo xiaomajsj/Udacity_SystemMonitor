@@ -18,7 +18,7 @@ using std::string;
 // TODO: Return the aggregate CPU utilization
 float Processor::Utilization() { 
 
-long TestDuration=2500; //every one second check
+long TestDuration=1000; //every one second check
 
 float Idle;
 float PrevIdle;
@@ -30,6 +30,7 @@ float totald;
 float idled;
 
 if(StateRefresh==true){
+StartTime=clock();
 CpuState=TransEle(LinuxParser::CpuUtilization());
 StateRefresh=false;
 }
@@ -54,7 +55,6 @@ UtiliNew=(PrevTotal-PrevIdle)/PrevTotal;
 else {UtiliNew=(totald-idled)/totald;}
 
 StateRefresh=true;
-StartTime=clock();
 }
 
 return UtiliNew;

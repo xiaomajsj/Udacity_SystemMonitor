@@ -21,7 +21,7 @@ class Processor {
  vector<float> CpuState;
  vector<float> CpuStateNew;
  bool StateRefresh=true;
- long StartTime=clock();
+ long StartTime;
  vector<float> TransEle(vector<string> input);
 };
 
