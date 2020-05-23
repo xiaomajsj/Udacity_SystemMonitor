@@ -18,7 +18,7 @@ using std::string;
 // TODO: Return the aggregate CPU utilization
 float Processor::Utilization() { 
 
-long TestDuration=1000; //every one second check
+long TestDuration=2500; //every one second check
 
 float Idle;
 float PrevIdle;

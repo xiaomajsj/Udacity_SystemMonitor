@@ -190,14 +190,11 @@ int LinuxParser::RunningProcesses() {
 // TODO: Read and return the command associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::Command(int pid) { 
-   string command;
    string line;
-   std::ifstream stream(kProcDirectory + "/" + to_string(pid)+ kCmdlineFilename);
+   std::ifstream stream(kProcDirectory  + to_string(pid)+ kCmdlineFilename);
   if (stream.is_open()) {
     while(std::getline(stream, line)){
-    std::istringstream linestream(line);
-    linestream >> command;
-    return command;
+      return line;
   }
  }
 }
@@ -209,7 +206,7 @@ string LinuxParser::Command(int pid) {
 // REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::Ram(int pid) { 
    string memoryused;
-   float memoryinM;
+   long memoryinM;
    string line;
    string key;
    string kb;
@@ -219,8 +216,8 @@ string LinuxParser::Ram(int pid) {
     std::istringstream linestream(line);
     while(linestream >> key>>memoryused>>kb){
     if(key=="VmSize:"){
-      memoryinM=stringToNum<float>(memoryused)/1000;
-      return to_string(memoryinM)+"mB";} 
+      memoryinM=stringToNum<long>(memoryused)/1000;
+      return to_string(memoryinM);} 
     }
   }
  }
@@ -230,7 +227,7 @@ string LinuxParser::Ram(int pid) {
 // TODO: Read and return the user ID associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::Uid(int pid) { 
-  string uid;
+   string uid;
    string line;
    string key;
    std::ifstream stream(kProcDirectory + "/" + to_string(pid)+ kStatusFilename);
@@ -250,6 +247,7 @@ string LinuxParser::User(int pid) {
    string line;
    string key;
    string key2;
+   string uid_;
    string uid;
 
    uid=Uid(pid);
@@ -258,8 +256,8 @@ string LinuxParser::User(int pid) {
     while(std::getline(stream, line)){
     std::replace(line.begin(),line.end(),':',' ');
     std::istringstream linestream(line);
-    linestream >> username>>key2>>uid;
-    if(key2=="x"){return username;} 
+    linestream >> username>>key2>>uid_;
+    if(key2=="x" && uid_==uid){return username;} 
    }
  }
 }
@@ -275,7 +273,7 @@ long LinuxParser::UpTime(int pid) {
   if (stream.is_open()) {
     while(std::getline(stream, line)){
     std::istringstream linestream(line);
-    for(unsigned int i=0;i<21;i++){
+    for(unsigned int i=0;i<=21;i++){
       if(i==21){
     linestream >> Uptime;}
       else{linestream >> unused;}
@@ -283,5 +281,7 @@ long LinuxParser::UpTime(int pid) {
     
     }
   }
- return stringToNum<long>(Uptime)/sysconf(_SC_CLK_TCK);
+  return stringToNum<long>(Uptime);
+ //return stringToNum<long>(Uptime)/sysconf(_SC_CLK_TCK);
+ 
  }

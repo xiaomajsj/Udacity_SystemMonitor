@@ -18,6 +18,10 @@ class Process {
 
   // TODO: Declare any necessary private members
  private:
+ int pid;
+
+ friend class System;
+
 };
 
 #endif
